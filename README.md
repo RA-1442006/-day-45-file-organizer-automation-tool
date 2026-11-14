@@ -42,8 +42,8 @@ The primary objective for Day 1 is to scan a folder, classify files by their ext
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/day-45-file-organizer-automation-tool.git
-cd day-45-file-organizer-automation-tool
+git clone https://github.com/RA-1442006/-day-45-file-organizer-automation-tool.git
+cd -day-45-file-organizer-automation-tool
 ```
 
 ### Usage Examples
