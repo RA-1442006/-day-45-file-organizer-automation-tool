@@ -1,5 +1,6 @@
 import os
 import shutil
+import hashlib
 from pathlib import Path
 
 # mapping extensions to category folders
@@ -31,24 +32,61 @@ def get_safe_destination(dest_dir, filename):
         counter += 1
     return new_path
 
-def organize_files(folder_path):
+def get_file_hash(file_path):
+    # calculate md5 hash to check if files are identical
+    hasher = hashlib.md5()
+    with open(file_path, 'rb') as f:
+        while chunk := f.read(8192):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+def organize_files(folder_path, dry_run=False):
     target = Path(folder_path)
     if not target.exists() or not target.is_dir():
         print(f"Error: Folder '{folder_path}' does not exist.")
         return
 
-    # create category folders
-    for category in EXTENSIONS.keys():
-        (target / category).mkdir(exist_ok=True)
-    (target / 'Others').mkdir(exist_ok=True)
+    # create category folders + Duplicates
+    categories = list(EXTENSIONS.keys()) + ['Others', 'Duplicates']
+    if not dry_run:
+        for cat in categories:
+            (target / cat).mkdir(exist_ok=True)
 
+    seen_hashes = {}
+    
     for item in target.iterdir():
-        if item.is_file():
+        # skip directories so we don't process already organized folders
+        if item.is_dir():
+            continue
+
+        try:
+            file_hash = get_file_hash(item)
+            
+            # check for duplicates
+            if file_hash in seen_hashes:
+                dest_folder = target / 'Duplicates'
+                dest_file = get_safe_destination(dest_folder, item.name)
+                if dry_run:
+                    print(f"[DRY-RUN] Duplicate found: {item.name} -> Duplicates (matches {seen_hashes[file_hash]})")
+                else:
+                    shutil.move(str(item), str(dest_file))
+                    print(f"Duplicate moved: {item.name} -> Duplicates")
+                continue
+
+            seen_hashes[file_hash] = item.name
+
             category = get_category(item.name)
             dest_folder = target / category
             dest_file = get_safe_destination(dest_folder, item.name)
-            shutil.move(str(item), str(dest_file))
-            print(f"Moved: {item.name} -> {category}")
+
+            if dry_run:
+                print(f"[DRY-RUN] Would move: {item.name} -> {category}")
+            else:
+                shutil.move(str(item), str(dest_file))
+                print(f"Moved: {item.name} -> {category}")
+
+        except Exception as e:
+            print(f"Error processing {item.name}: {e}")
 
 if __name__ == '__main__':
     folder = input("Enter folder path: ").strip()
