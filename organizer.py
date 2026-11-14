@@ -98,7 +98,13 @@ def organize_folder(folder_path, dry_run=False):
     start_time = datetime.now()
     log_path = target / 'organizer.log'
     report_path = target / 'summary_report.txt'
-    logger = setup_logger(log_path)
+    
+    if not dry_run:
+        logger = setup_logger(log_path)
+    else:
+        logger = logging.getLogger('FileOrganizer')
+        logger.handlers.clear()
+        logger.addHandler(logging.NullHandler())
 
     mode = "DRY-RUN" if dry_run else "REAL RUN"
     logger.info(f"Starting file organization in {mode} mode for: {target}")

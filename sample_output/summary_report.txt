@@ -1,0 +1,20 @@
+==================================================
+       FILE ORGANIZER SUMMARY REPORT              
+==================================================
+Run Timestamp      : 2026-11-14 11:40:48
+Total Scanned      : 24
+Files Moved        : 24
+Duplicates Found   : 3
+Files Skipped      : 0
+Errors/Failed      : 0
+--------------------------------------------------
+Breakdown by Category:
+  - Documents   :  8 files (386 B)
+  - Images      :  3 files (93 B)
+  - Videos      :  2 files (68 B)
+  - Audio       :  2 files (67 B)
+  - Archives    :  2 files (57 B)
+  - Code        :  2 files (85 B)
+  - Others      :  2 files (82 B)
+  - Duplicates  :  3 files (134 B)
+==================================================

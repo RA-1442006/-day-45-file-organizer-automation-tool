@@ -1,0 +1,1 @@
+1. Create project 2. Test dry-run 3. Commit code
